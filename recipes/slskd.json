@@ -37,16 +37,22 @@
   ],
   "ports": {
     "web": { "default": 5030, "pick": true, "askOnInstall": true, "label": "Web UI and API port" },
+    "https": { "default": 5031, "pick": true, "askOnInstall": true, "label": "HTTPS port (used only with HTTPS on)" },
     "listen": { "default": 2234, "pick": true, "askOnInstall": true, "label": "Soulseek listening port" }
   },
   "config": [
-    { "key": "soulseekUsername", "label": "Soulseek username", "kind": "text", "askOnInstall": true,
-      "help": "Your Soulseek account. slskd runs without one but cannot search until you sign in." },
-    { "key": "soulseekPassword", "label": "Soulseek password", "kind": "password", "secret": true, "askOnInstall": true },
+    { "key": "soulseekUsername", "label": "Soulseek username", "kind": "text", "required": true, "askOnInstall": true,
+      "help": "Your Soulseek account; slskd signs in with it. A new name creates the account on first sign-in." },
+    { "key": "soulseekPassword", "label": "Soulseek password", "kind": "password", "secret": true, "required": true, "askOnInstall": true },
     { "key": "downloadsDir", "label": "Downloads folder", "kind": "path", "default": "{home}/Music/Soulseek",
       "tccSensitive": true, "createDir": true, "askOnInstall": true },
+    { "key": "incompleteDir", "label": "Incomplete downloads folder", "kind": "path",
+      "tccSensitive": true, "createDir": true, "askOnInstall": true,
+      "help": "Where downloads wait until they finish. Blank: .incomplete inside the downloads folder." },
     { "key": "shareDownloads", "label": "Share my downloads folder", "kind": "bool", "default": true,
-      "help": "Soulseek is give-and-take: users who share nothing get queued behind everyone else." }
+      "help": "Soulseek is give-and-take: users who share nothing get queued behind everyone else." },
+    { "key": "httpsEnabled", "label": "Also serve the web UI over HTTPS", "kind": "bool", "default": false, "askOnInstall": true,
+      "help": "With slskd's own self-signed certificate, still only on this computer (127.0.0.1). Roadie keeps using plain HTTP." }
   ],
   "configuration": [
     { "entry": "shares.directories", "merge": "append", "kind": "paths", "default": [], "askOnInstall": true,
@@ -74,7 +80,7 @@
         "flags": { "no_logo": true, "no_version_check": true },
         "directories": {
           "downloads": "{config.downloadsDir}",
-          "incomplete": "{config.downloadsDir}/.incomplete"
+          "incomplete": { "$if": "config.incompleteDir", "then": "{config.incompleteDir}", "else": "{config.downloadsDir}/.incomplete" }
         },
         "shares": {
           "directories": { "$if": "config.shareDownloads", "then": ["{config.downloadsDir}"], "else": [] }
@@ -82,7 +88,7 @@
         "web": {
           "port": "{ports.web|int}",
           "ip_address": "127.0.0.1",
-          "https": { "disabled": true },
+          "https": { "disabled": { "$if": "config.httpsEnabled", "then": false, "else": true }, "port": "{ports.https|int}" },
           "authentication": {
             "disabled": false,
             "username": "slskd",
