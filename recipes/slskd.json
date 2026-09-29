@@ -3,11 +3,12 @@
   "name": "slskd",
   "displayName": "slskd",
   "author": "Roadie",
-  "revision": 6,
+  "revision": 7,
+  "minRoadie": "0.6.0",
   "summary": "Soulseek client with a web UI and HTTP API. Music apps use it to search and download from the Soulseek network.",
   "homepage": "https://github.com/slskd/slskd",
   "license": "AGPL-3.0",
-  "notes": "slskd is a machine-wide singleton: a copy you run yourself blocks this one. The web UI stays on, bound to 127.0.0.1, behind slskd's default login (slskd / slskd) — that is what gives every OS a graceful stop.",
+  "notes": "Roadie installs slskd, writes its first configuration, and starts, stops, updates and removes it. After install the configuration is slskd's own: change it in slskd's web UI. Every app you allow uses the same API key and talks to slskd directly. slskd is a machine-wide singleton: a copy you run yourself blocks this one. The web UI is bound to 127.0.0.1 behind slskd's default login (slskd / slskd), which also gives every OS a graceful stop.",
   "kind": "daemon",
 
   "platforms": ["darwin-arm64", "darwin-x64", "windows-x64", "windows-arm64"],
@@ -31,11 +32,12 @@
   "version": { "args": ["--version"], "regex": "(\\d+\\.\\d+\\.\\d+)", "timeoutSec": 60 },
 
   "secrets": [
-    { "key": "internalKey", "generate": "hex48" }
+    { "key": "internalKey", "generate": "hex48", "askOnInstall": true, "minLen": 16,
+      "label": "API key (every app you allow uses it)" }
   ],
   "ports": {
-    "web": { "default": 5030, "pick": true },
-    "listen": { "default": 2234, "pick": true }
+    "web": { "default": 5030, "pick": true, "askOnInstall": true, "label": "Web UI and API port" },
+    "listen": { "default": 2234, "pick": true, "askOnInstall": true, "label": "Soulseek listening port" }
   },
   "config": [
     { "key": "soulseekUsername", "label": "Soulseek username", "kind": "text", "askOnInstall": true,
@@ -52,9 +54,8 @@
       "help": "Folders other Soulseek users can browse and download from. Added to the downloads folder when that is shared too." }
   ],
   "connection": {
-    "policy": "perConsumerKey",
-    "minLen": 16,
-    "maxLen": 255,
+    "policy": "sharedKey",
+    "key": "internalKey",
     "url": "http://127.0.0.1:{ports.web}",
     "webLogin": { "username": "slskd", "password": "slskd" }
   },
@@ -65,9 +66,10 @@
       "path": "{data}/slskd.yml",
       "format": "yaml",
       "secret": true,
+      "writeOnce": true,
       "content": {
         "headless": false,
-        "remote_configuration": false,
+        "remote_configuration": true,
         "remote_file_management": true,
         "flags": { "no_logo": true, "no_version_check": true },
         "directories": {
@@ -86,10 +88,7 @@
             "username": "slskd",
             "password": "slskd",
             "api_keys": {
-              "roadie": { "key": "{secrets.internalKey}", "role": "readwrite", "cidr": "127.0.0.1/32,::1/128" },
-              "$each": "consumers",
-              "key": "{item.id}",
-              "value": { "key": "{item.key}", "role": "readwrite", "cidr": "127.0.0.1/32,::1/128" }
+              "apps": { "key": "{secrets.internalKey}", "role": "readwrite", "cidr": "127.0.0.1/32,::1/128" }
             }
           }
         },
