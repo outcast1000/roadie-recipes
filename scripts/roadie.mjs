@@ -2,7 +2,7 @@
 // Validates and dry-runs recipes with the newest Roadie CLI, on this machine.
 //
 //   node scripts/roadie.mjs recipes/slskd.json [more.json …]
-//   ROADIE=/path/to/roadie node scripts/roadie.mjs …   use a local build instead
+//   ROADIE=/path/to/roadie node scripts/roadie.mjs …   use a local CLI-release build instead
 //   RECIPES='["recipes/a.json"]' node scripts/roadie.mjs  the list as JSON (CI)
 //
 // The CLI comes from the `cli-latest` manifest (the address apps that bundle
@@ -60,6 +60,13 @@ if (!files.length) {
   process.exit(2);
 }
 const { bin, version } = process.env.ROADIE ? { bin: process.env.ROADIE, version: "local" } : await fetchCli();
+// Only the CLI release runs commands in-process; the desktop binary would
+// start a background service (and its login item) for the scratch data dir.
+const release = JSON.parse(spawnSync(bin, ["version"], { encoding: "utf8" }).stdout || "{}").release;
+if (release !== "cli") {
+  console.error(`${bin} is Roadie's ${release ?? "unknown"} release; use the CLI release (cargo build --no-default-features)`);
+  process.exit(2);
+}
 console.log(`Roadie CLI ${version} on ${platform}`);
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "roadie-recipes-"));
 
