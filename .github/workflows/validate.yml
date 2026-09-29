@@ -1,0 +1,61 @@
+# Checks a pull request. It runs untrusted input, so: `pull_request` (never
+# `pull_request_target`), no secrets, a read-only token, and the checking
+# scripts come from the base commit — a PR cannot loosen its own checks.
+name: Validate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  rules:
+    name: Rules
+    runs-on: ubuntu-latest
+    outputs:
+      recipes: ${{ steps.check.outputs.recipes }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: base
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          path: pr
+          fetch-depth: 0
+          persist-credentials: false
+      - id: check
+        working-directory: pr
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: node ../base/scripts/check-pr.mjs "$BASE_SHA"
+
+  roadie:
+    name: Roadie (${{ matrix.os }})
+    needs: rules
+    if: needs.rules.outputs.recipes != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        # darwin-arm64, darwin-x64, windows-x64: the platforms the Roadie CLI
+        # is built for. A recipe's dry run is skipped where it doesn't apply.
+        os: [macos-latest, macos-15-intel, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: base
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          path: pr
+          persist-credentials: false
+      - working-directory: pr
+        env:
+          RECIPES: ${{ needs.rules.outputs.recipes }}
+        run: node ../base/scripts/roadie.mjs

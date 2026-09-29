@@ -1,0 +1,6 @@
+# The owner reviews everything. A contributor who maintains a recipe can be
+# added on its line, e.g.:
+#   /recipes/example.json   @outcast1000 @their-handle
+*                       @outcast1000
+/.github/               @outcast1000
+/scripts/               @outcast1000

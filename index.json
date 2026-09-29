@@ -1,0 +1,50 @@
+{
+  "indexVersion": 1,
+  "generatedAt": "2026-09-29T06:35:15.769Z",
+  "recipes": [
+    {
+      "name": "ffmpeg",
+      "summary": "Converts, merges and inspects audio and video. yt-dlp needs it to merge separate streams; players use it to transcode.",
+      "kind": "cli",
+      "revision": 2,
+      "platforms": [
+        "darwin-arm64",
+        "windows-x64",
+        "windows-arm64"
+      ],
+      "minRoadie": "0.0.0",
+      "path": "recipes/ffmpeg.json",
+      "sha256": "73bc64265fee7ceef9c80e430515ae18aac27d94b152fefe24df32a497acbc8f"
+    },
+    {
+      "name": "slskd",
+      "summary": "Soulseek client with a web UI and HTTP API. Music apps use it to search and download from the Soulseek network.",
+      "kind": "daemon",
+      "revision": 5,
+      "platforms": [
+        "darwin-arm64",
+        "darwin-x64",
+        "windows-x64",
+        "windows-arm64"
+      ],
+      "minRoadie": "0.0.0",
+      "path": "recipes/slskd.json",
+      "sha256": "b079a7daa08fa0f4f9946dc1884e6471c7a2321c7730c0de53efa93dddb048dc"
+    },
+    {
+      "name": "yt-dlp",
+      "summary": "Downloads audio and video from YouTube and hundreds of other sites. Music apps use it to fetch tracks and streams.",
+      "kind": "cli",
+      "revision": 2,
+      "platforms": [
+        "darwin-arm64",
+        "darwin-x64",
+        "windows-x64",
+        "windows-arm64"
+      ],
+      "minRoadie": "0.0.0",
+      "path": "recipes/yt-dlp.json",
+      "sha256": "dc461c7c91b32e66d7caba8683a3f3d689e6da894d7b5cacfd40324744f6aed4"
+    }
+  ]
+}
