@@ -13,6 +13,9 @@ binary, `ffmpeg` for sidecar binaries, `slskd` for a configured daemon).
 - **Raise `revision` on every change.** Roadie offers a recipe update only when the revision
   goes up, and every user reviews it before it applies. A recipe that doesn't need to change
   shouldn't.
+- **Set `minRoadie` when you use a newer field.** If the recipe needs a field a Roadie release
+  added, set `"minRoadie": "<that version>"`. Older Roadies ignore fields they don't know and
+  would run the recipe wrong, so the catalog hides it from them.
 - **List only the platforms you tested.** Roadie supports `darwin-arm64`, `darwin-x64`,
   `windows-x64` and `windows-arm64`. There is no Linux.
 - **Loopback only.** A daemon binds `127.0.0.1`, and its stop ladder should include the
