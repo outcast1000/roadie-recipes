@@ -10,6 +10,7 @@
   "license": "AGPL-3.0",
   "notes": "Roadie installs slskd, writes its first configuration, and starts, stops, updates and removes it. After install the configuration is slskd's own: change it in slskd's web UI. Every app you allow uses the same API key and talks to slskd directly. slskd is a machine-wide singleton: a copy you run yourself blocks this one. The web UI is bound to 127.0.0.1 behind slskd's default login (slskd / slskd), which also gives every OS a graceful stop.",
   "kind": "daemon",
+  "singleton": true,
 
   "platforms": ["darwin-arm64", "darwin-x64", "windows-x64", "windows-arm64"],
   "startAfterInstall": { "default": true, "askOnInstall": true },
