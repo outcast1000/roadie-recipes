@@ -3,7 +3,7 @@
   "name": "slskd",
   "displayName": "slskd",
   "author": "Roadie",
-  "revision": 5,
+  "revision": 6,
   "summary": "Soulseek client with a web UI and HTTP API. Music apps use it to search and download from the Soulseek network.",
   "homepage": "https://github.com/slskd/slskd",
   "license": "AGPL-3.0",
@@ -35,7 +35,7 @@
   ],
   "ports": {
     "web": { "default": 5030, "pick": true },
-    "listen": { "default": 50300, "pick": false }
+    "listen": { "default": 2234, "pick": true }
   },
   "config": [
     { "key": "soulseekUsername", "label": "Soulseek username", "kind": "text", "askOnInstall": true,
