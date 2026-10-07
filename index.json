@@ -1,6 +1,6 @@
 {
   "indexVersion": 1,
-  "generatedAt": "2026-09-29T06:35:15.769Z",
+  "generatedAt": "2026-10-07T17:04:25.794Z",
   "recipes": [
     {
       "name": "ffmpeg",
@@ -20,7 +20,7 @@
       "name": "slskd",
       "summary": "Soulseek client with a web UI and HTTP API. Music apps use it to search and download from the Soulseek network.",
       "kind": "daemon",
-      "revision": 5,
+      "revision": 6,
       "platforms": [
         "darwin-arm64",
         "darwin-x64",
@@ -29,7 +29,7 @@
       ],
       "minRoadie": "0.0.0",
       "path": "recipes/slskd.json",
-      "sha256": "b079a7daa08fa0f4f9946dc1884e6471c7a2321c7730c0de53efa93dddb048dc"
+      "sha256": "dfca234b5a7631575ea6a77cfb5311873f9211dbbb11181c5fba9c11f03ae01d"
     },
     {
       "name": "yt-dlp",
